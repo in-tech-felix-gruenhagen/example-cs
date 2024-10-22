@@ -1,0 +1,35 @@
+plugins {
+    id("java")
+}
+
+group = "org.example"
+version = "1.0-SNAPSHOT"
+
+repositories {
+    maven {
+        url = uri("foo.bar")
+        credentials {
+            username = "myuser"
+            password = "mypublicpasswprd"
+        }
+    }
+}
+dependencies {
+    implementation("org.eclipse.jgit:org.eclipse.jgit:6.6.0.202305301015-r")
+
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'org.example.InitOption'
+        exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
